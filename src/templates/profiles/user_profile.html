@@ -1,0 +1,119 @@
+{% extends 'base.html' %} 
+
+{% block title %} My Profiel {% endblock title %} 
+{% block body %} 
+{% include 'navbar.html' %} 
+
+<div class="container">
+    
+    {% if confirm %}
+    <div class="alert alert-success" role="alert">
+        your profile if updated!
+    </div>
+    
+    {% endif %}
+    
+    <div class="card card-body w-75 m-auto" style="width:18rem;">
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="{{profile.avatar.url}}" class="img-fluid" alt="">
+                <button type="button" class="btn btn-primary w-100 mt-3 " data-bs-toggle="modal" data-bs-target="#modalId">
+      Update Profile
+    </button>
+            </div>
+            <div class="col-md-8">
+                <table class="table table-sm">
+                    <tr>
+                        <td>Username</td>
+                        <td>{{request.user}}</td>
+                    </tr>
+                    <tr>
+                        <td>Full name </td>
+                        <td>{{profile.first_name}} {{profile.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td>{{profile.email}}</td>
+                    </tr>
+                    <tr>
+                        <td>Friends</td>
+                        <td>
+                            <ul>
+                                {% for friend in profile.get_friends %} 
+                                <li>{{friend }}</li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td>
+                            Number of Posts 
+                        </td>
+                        <td>
+                            {{profile.get_post_number}}
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td>
+                            Number of Likes Given  
+                        </td>
+                        <td>
+                            {{profile.get_likes_given}}
+                        </td>
+                    </tr>
+                    <tr>
+
+                        <td>
+                            Number of Received 
+                        </td>
+                        <td>
+                            {{profile.get_likes_received}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal trigger button -->
+    
+    
+    <!-- Modal Body -->
+    <!-- if you want to close by clicking outside the modal, delete the last endpoint:data-bs-backdrop and data-bs-keyboard -->
+    <div class="modal fade" id="modalId" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" role="dialog" aria-labelledby="modalTitleId" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitleId">Update Profile</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="{{profile.avatar.url}}" class="img-fluid" alt="">
+                    <form action="" method="POST" class="form">
+                        {% csrf_token %} 
+                        {{form.as_p}}
+                        <input type="submit" value="Update" class="btn btn-success">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!-- <button type="button" class="btn btn-primary">Save</button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <!-- Optional: Place to the bottom of scripts -->
+    <script>
+        const myModal = new bootstrap.Modal(document.getElementById('modalId'), options)
+    
+    </script>
+    
+<!-- end fo container -->
+</div>
+
+
+{% endblock body %} 

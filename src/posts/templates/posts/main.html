@@ -1,0 +1,74 @@
+{% extends 'base.html' %} 
+
+{% block title %} Post {% endblock %} 
+
+{% block body %} 
+{% include 'navbar.html' %}
+<div class="container">
+
+   <section>
+    <div class="row">
+        <div class="col-lg-6">
+            {% for obj in post %}
+            <div class="card card-body mt-3">
+                <div class="content">
+                    {{obj.content}}
+                </div>
+                <div class="like-btn">
+                    <form action="{% url 'post-like' %}" method="POST" >
+                        {% csrf_token %} 
+
+                        <input type="hidden" name="post_id" value="{{obj.id}}">
+
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            {% if profile not in obj.liked.all %} 
+                            <i class="bi bi-hand-thumbs-up"></i> &nbsp; like 
+                            {% else %}
+                            <i class="bi bi-hand-thumbs-down"></i>&nbsp; unlike
+                            {% endif %}
+                        </button>
+                        &nbsp; {{obj.number_of_likes}}
+                    </form>
+                </div>
+                <div class="comment-list">
+                    {% if obj.comment_set.all %} 
+                    {% for comment in obj.comment_set.all %} 
+                    <p>{{comment.body}}</p>
+                    
+                    
+                    {% endfor %} 
+                    {% endif %} 
+                </div>
+                <div class="comment">
+                    <form action="" method="POST" >
+                        {% csrf_token %} 
+                        <input type="hidden" name="post_id" value="{{obj.id}}">
+                        {{comment_form}}
+                        <input type="submit" value="comment" name="comment_form_submit">
+                    </form>
+                </div>
+            </div>
+            {% endfor %} 
+        </div>
+        <div class="col-lg-6">
+            {% if add_post %}
+            <div class="alert alert-primary" role="alert">
+                New Post Added successfully
+            </div>
+             
+            {% endif %}
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %} 
+                {{post_form.as_p}}
+                <input type="submit" value="Post" class="btn btn-success btn-sm w-50" name="post_form_submit">
+            </form>
+        </div>
+    </div>
+   </section>
+
+
+
+
+</div>
+
+{% endblock %}
