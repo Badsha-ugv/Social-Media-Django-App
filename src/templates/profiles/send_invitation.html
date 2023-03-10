@@ -1,0 +1,18 @@
+{% extends 'base.html' %} 
+{% block title %} Send Invitation {% endblock %} 
+
+{% block body %} 
+
+<div class="container">
+    <h3>Send Invitation</h3>
+
+    <ul>
+        {% for i in qs %} 
+        <li>{{i}}</li>
+        {% endfor %} 
+
+    </ul>
+</div>
+
+
+{% endblock %} 

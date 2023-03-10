@@ -1,0 +1,16 @@
+{% extends 'base.html' %} 
+{% block title %} All Profile {% endblock %} 
+
+{% block body %} 
+
+<div class="container">
+    <h3>All Pfofile List</h3>
+
+    <ul>
+        {% for i in qs %} 
+            <li>{{i}}</li>
+        {% endfor %} 
+    </ul>
+</div>
+
+{% endblock %} 

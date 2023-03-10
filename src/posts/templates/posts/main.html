@@ -1,7 +1,9 @@
 {% extends 'base.html' %} 
-
+{% load static %} 
 {% block title %} Post {% endblock %} 
-
+{% block css %} 
+<link rel="stylesheet" href="{% static 'css/posts.css' %}">
+{% endblock %}
 {% block body %} 
 {% include 'navbar.html' %}
 <div class="container">
@@ -11,29 +13,53 @@
         <div class="col-lg-6">
             {% for obj in post %}
             <div class="card card-body mt-3">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img class="user-avater-sm" src="{{obj.author.avatar.url}}" alt="">
+                        <h5 class="m-0">{{obj.author.first_name}} {{ obj.author.last_name}}</h5>
+                        <p>{{obj.created|timesince}} ago</p>
+                    </div>
+                    <div class="col-md-6 ">
+                        <a href="{% url 'post-update' obj.pk %}" class="btn btn-secondary btn-sm update-btn ">Update</a>
+                        <a href="{% url 'post-delete' obj.pk %}" class="btn btn-secondary btn-sm delete-btn">Delete</a>
+                    </div>
+                </div>
                 <div class="content">
                     {{obj.content}}
                 </div>
-                <div class="like-btn">
-                    <form action="{% url 'post-like' %}" method="POST" >
-                        {% csrf_token %} 
-
-                        <input type="hidden" name="post_id" value="{{obj.id}}">
-
-                        <button type="submit" class="btn btn-primary btn-sm">
-                            {% if profile not in obj.liked.all %} 
-                            <i class="bi bi-hand-thumbs-up"></i> &nbsp; like 
-                            {% else %}
-                            <i class="bi bi-hand-thumbs-down"></i>&nbsp; unlike
-                            {% endif %}
-                        </button>
-                        &nbsp; {{obj.number_of_likes}}
-                    </form>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="like-btn">
+                            <form action="{% url 'post-like' %}" method="POST">
+                                {% csrf_token %}
+                        
+                                <input type="hidden" name="post_id" value="{{obj.id}}">
+                        
+                                <button type="submit" class="btn btn-sm bg-transparent color">
+                                    {% if profile not in obj.liked.all %}
+                                    <i class="bi bi-hand-thumbs-up"></i> &nbsp; like
+                                    {% else %}
+                                    <i class="bi bi-hand-thumbs-down"></i>&nbsp; unlike
+                                    {% endif %}
+                                </button>
+                                &nbsp; {{obj.number_of_likes}}
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <i class="bi bi-chat-fill"></i> {{obj.number_of_comment}}
+                    </div>
                 </div>
+                
+                <hr>
                 <div class="comment-list">
                     {% if obj.comment_set.all %} 
                     {% for comment in obj.comment_set.all %} 
-                    <p>{{comment.body}}</p>
+                    <div class="card card-body my-2">
+
+                        <p>{{comment.body}}</p>
+                    </div>
                     
                     
                     {% endfor %} 
@@ -44,7 +70,7 @@
                         {% csrf_token %} 
                         <input type="hidden" name="post_id" value="{{obj.id}}">
                         {{comment_form}}
-                        <input type="submit" value="comment" name="comment_form_submit">
+                        <input type="submit" class="btn btn-secondary" value="comment" name="comment_form_submit">
                     </form>
                 </div>
             </div>

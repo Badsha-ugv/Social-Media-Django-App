@@ -3,7 +3,30 @@ from django.contrib.auth.models import User
 # from django.utils.text import slugify 
 from django.template.defaultfilters import slugify 
 from .utils import get_random_code
+from django.db.models import Q 
 # Create your models here.
+
+class ProfileManager(models.Manager):
+    def get_all_profiles_for_sent_invite(self,sender):
+        profile = Profile.objects.get(user=sender)  
+        profiles = Profile.objects.all().exclude(user=sender)  
+
+        qs = Relationship.objects.filter(Q(sender=profile) | Q(receiver=profile)) 
+
+        accepted = set([]) 
+        for i in qs:
+            if i.status == 'accepted':	
+                accepted.add(i.sender) 
+                accepted.add(i.receiver)
+
+        available = [profile for profile in profiles if profile not in accepted ]
+
+        return available  
+    def get_all_profiles(self,me):
+        profiles = Profile.objects.all().exclude(user=me)
+        return profiles 
+
+
 
 class Profile(models.Model):
     first_name = models.CharField(max_length=100,blank=True)
@@ -18,6 +41,7 @@ class Profile(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True) 
 
+    objects = ProfileManager() 
 
     def get_friends(self):
         return self.friends.all() 
@@ -69,11 +93,18 @@ RELATION_STATUS = (
     ('send','send'),
     ('accepted','accepted'),
 )
+
+class RelationshipManager(models.Manager):
+    def  invitation_received(self,receiver):
+        qs = Relationship.objects.filter(receiver=receiver,status='send')
+        return qs 
+
 class Relationship(models.Model):
     sender = models.ForeignKey(Profile, related_name="sender",on_delete=models.CASCADE)
     receiver = models.ForeignKey(Profile, related_name="receiver",on_delete=models.CASCADE)
     status = models.CharField(max_length=10, choices=RELATION_STATUS) 
-
+    objects = RelationshipManager() 
+    
     def __str__(self):
         return f"{self.sender}  - {self.receiver} - {self.status}" 
     

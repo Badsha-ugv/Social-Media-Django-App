@@ -2,6 +2,9 @@ from django.shortcuts import render,redirect
 from .models import Post ,Like,Comment 
 from profiles.models import Profile
 from .forms import PostForm,CommentForm
+from django.urls import reverse_lazy 
+from django.views.generic import DeleteView,UpdateView
+from django.contrib import messages
 
 
 # my views start from here 
@@ -68,6 +71,35 @@ def post_like(request):
         post_obj.save()
         like.save() 
     return redirect('user-post')
+
+class PostDetele(DeleteView):
+    model = Post 
+    template_name = 'posts/delete.html' 
+    success_url = reverse_lazy('user-post')
+
+    def get_object(self, *args, **kwargs):
+        pk = self.kwargs.get('pk')
+        obj = Post.objects.get(pk=pk)
+
+        if not obj.author.user == self.request.user:
+            messages.warning(self.request,'You have to permissions') 
+        return obj 
+    
+
+class PostUpdate(UpdateView):
+    model = Post 
+    form_class = PostForm
+    template_name = 'posts/update.html'
+    success_url = reverse_lazy('user-post') 
+
+    def form_valid(self,form):
+        profile = Profile.objects.get(user= self.request.user) 
+
+        if form.instance.author == profile :
+            return super().form_valid(form) 
+        else:
+            form.add_error(None,'You have no permission to update this post') 
+            return super().form_invalid(form)
 
 
 
