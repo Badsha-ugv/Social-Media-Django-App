@@ -7,11 +7,44 @@
     
     <h3>Friend Request</h3>
 
-    <ul>
-        {% for item in qs %} 
-            <li>{{item}}</li>
+
+        {% if is_empty %} 
+        <h3>No Invitations Available </h3>
+        {% endif %} 
+        <!-- xxx -->
+        <div class="div d-flex" style="gap:20px 10px">
+
+        
+        {% for obj in qs %} 
+            <div class="card p-3 mt-3 w-25 shadow ">
+                <div class="card-img mx-auto text-center ">
+
+                    <img src="{{obj.avatar.url}}" alt="" class="img-fluid" style="width:80px;height:80px; border-radius: 50%;">
+                </div>
+                <div class="card-body text-center mx-auto">
+
+                    <h3 >{{obj.user}}</h3>
+                    <p>{{obj.bio}}</p>
+                    <a href="" class="btn btn-info btn-sm d-block">
+                        See Profile 
+                    </a>
+                    <div class="action-button d-flex  mt-2" style="gap:5px;">
+                        <form action="" method="post">
+                            {% csrf_token %} 
+                            <input type="hidden" name="profile_pk" value="{{obj.pk}}"> 
+                            <button class="btn btn-sm btn-success">Accept</button>
+                        </form>
+                        <form action="" method="post">
+                            {% csrf_token %} 
+                            <input type="hidden" name="profile_pk" value="{{obj.pk}}"> 
+                            <button class="btn btn-sm btn-danger">Reject</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         {% endfor %} 
-    </ul>
+        </div>
+    
 </div>
 
 

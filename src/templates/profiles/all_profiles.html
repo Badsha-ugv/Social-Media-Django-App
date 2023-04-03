@@ -1,16 +1,54 @@
-{% extends 'base.html' %} 
-{% block title %} All Profile {% endblock %} 
+{% extends 'base.html' %}
+{% block title %} All Profile {% endblock %}
 
-{% block body %} 
+{% block body %}
 
 <div class="container">
     <h3>All Pfofile List</h3>
+    {% if is_eampty %}
+    <h3>No Profile Found </h3>
+    {% endif %}
 
-    <ul>
-        {% for i in qs %} 
-            <li>{{i}}</li>
-        {% endfor %} 
-    </ul>
+
+    {% for obj in object_list %}
+    <div class="card mt-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-2">
+                    <img src="{{obj.avatar.url}}" class="img-fluid" alt="">
+                </div>
+                <div class="col-4">
+                    <h3>{{obj.user}}</h3>
+                    <p>{{obj.bio}}</p>
+                    <button class="btn btn-primary mb-2">See Profile</button>
+
+
+
+                    {% if obj.user not in rel_receive and obj.user not in rel_send %}
+                    <form action="{% url 'send-invite' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="profile_pk" value="{{obj.pk}}">
+                        <button class="btn btn-outline-primary btn-sm">Add Friend</button>
+                    </form>
+                    {% endif %}
+
+                    {% if obj.user in rel_receive and requset.user not in obj.friends.all %}
+                    <button class="btn btn-secondary btn-sm" disabled>Waiting for Approval</button>
+                    {% endif %}
+
+                    {% if request.user in obj.friends.all %}
+                    <form action="{% url 'remove-friend' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="profile_pk" value="{{obj.pk}}">
+                        <button class="btn btn-outline-danger btn-sm">Unfriend</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
 </div>
 
-{% endblock %} 
+{% endblock %}
