@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from .models import Profile,Relationship
 from .forms import ProfileForm
 from django.db.models import Q
@@ -48,10 +48,25 @@ def send_envitation(request):
     return render(request,'profiles/send_invitation.html',context) 
 
 def accept_invite(request):
-    pass 
+    if request.method == 'POST': 
+        pk = request.POST.get('profile_pk')
+        sender = Profile.objects.get(pk=pk)
+        receiver = Profile.objects.get(user = request.user) 
+        rel = get_object_or_404(Relationship,sender=sender,receiver=receiver) 
+        if rel.status == 'send':
+            rel.status = 'accepted'
+            rel.save()
+    return redirect('my-invitation') 
+
 
 def reject_invite(request):
-    pass 
+    if request.method == 'POST':
+        pk = request.POST.get('profile_pk')
+        sender = Profile.objects.get(pk=pk)
+        receiver = Profile.objects.get(user=request.user)
+        rel = get_object_or_404(Relationship, sender=sender, receiver=receiver)
+        rel.delete() 
+    return redirect('my-invitation')
 
 def profile_list(request):
     user = request.user 

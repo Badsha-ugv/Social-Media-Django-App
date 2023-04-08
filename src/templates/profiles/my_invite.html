@@ -29,12 +29,12 @@
                         See Profile 
                     </a>
                     <div class="action-button d-flex  mt-2" style="gap:5px;">
-                        <form action="" method="post">
+                        <form action="{% url 'accept-invite' %}" method="post">
                             {% csrf_token %} 
                             <input type="hidden" name="profile_pk" value="{{obj.pk}}"> 
                             <button class="btn btn-sm btn-success">Accept</button>
                         </form>
-                        <form action="" method="post">
+                        <form action="{% url 'reject-invite' %}" method="post">
                             {% csrf_token %} 
                             <input type="hidden" name="profile_pk" value="{{obj.pk}}"> 
                             <button class="btn btn-sm btn-danger">Reject</button>

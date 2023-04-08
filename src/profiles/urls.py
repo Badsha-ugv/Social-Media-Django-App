@@ -10,7 +10,8 @@ urlpatterns = [
     path('send-invitation/',views.send_envitation,name='send-invitation'),
     path('send-invite/', views.send_invitation,name='send-invite'),
     path('remove-friend/',views.remove_friend,name='remove-friend'), 
-    
+    path('my-invitation/accept',views.accept_invite,name='accept-invite'),
+    path('my-invitation/reject',views.reject_invite,name='reject-invite'),
 
 
 ]
